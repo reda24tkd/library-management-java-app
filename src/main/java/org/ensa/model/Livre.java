@@ -69,7 +69,7 @@ public class Livre implements Comparable<Livre> {
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
     }
-    
+
     @Override
     public int compareTo(Livre autre) {
         return this.titre.compareTo(autre.titre);
