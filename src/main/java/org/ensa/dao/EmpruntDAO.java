@@ -16,7 +16,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
     public Result<Emprunt> create(Emprunt emprunt) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "INSERT INTO emprunt (livre_id, membre_id, dateEmprunt, dateRetourPrevue, dateRetourReel) VALUES (?, ?, ?, ?, ?)",
+                 "INSERT INTO emprunts (livre_id, membre_id, dateEmprunt, dateRetourPrevue, dateRetourReel) VALUES (?, ?, ?, ?, ?)",
                  Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, emprunt.getLivre().getId());
             stmt.setInt(2, emprunt.getMembre().getId());
@@ -36,7 +36,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
     public Result<Emprunt> findById(int id) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "SELECT e.*, l.*, m.* FROM emprunt e JOIN livre l ON e.livre_id = l.id JOIN membre m ON e.membre_id = m.id WHERE e.id = ?")) {
+                 "SELECT e.*, l.*, m.* FROM emprunts e JOIN livres l ON e.livre_id = l.id JOIN membres m ON e.membre_id = m.id WHERE e.id = ?")) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -54,7 +54,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                 "SELECT e.*, l.*, m.* FROM emprunt e JOIN livre l ON e.livre_id = l.id JOIN membre m ON e.membre_id = m.id")) {
+                 "SELECT e.*, l.*, m.* FROM emprunts e JOIN livres l ON e.livre_id = l.id JOIN membres m ON e.membre_id = m.id")) {
             while (rs.next()) {
                 emprunts.add(mapEmprunt(rs));
             }
@@ -68,7 +68,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
     public Result<Emprunt> update(Emprunt emprunt) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "UPDATE emprunt SET livre_id = ?, membre_id = ?, dateEmprunt = ?, dateRetourPrevue = ?, dateRetourReel = ? WHERE id = ?")) {
+                 "UPDATE emprunts SET livre_id = ?, membre_id = ?, dateEmprunt = ?, dateRetourPrevue = ?, dateRetourReel = ? WHERE id = ?")) {
             stmt.setInt(1, emprunt.getLivre().getId());
             stmt.setInt(2, emprunt.getMembre().getId());
             stmt.setDate(3, Date.valueOf(emprunt.getDateEmprunt()));
@@ -86,7 +86,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
     @Override
     public Result<Boolean> delete(int id) {
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("DELETE FROM emprunt WHERE id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM emprunts WHERE id = ?")) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0 ?
                 new Result<>(true, "Supprimé", true) :
@@ -100,7 +100,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
         List<Emprunt> emprunts = new LinkedList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "SELECT e.*, l.*, m.* FROM emprunt e JOIN livre l ON e.livre_id = l.id JOIN membre m ON e.membre_id = m.id WHERE m.id = ?")) {
+                 "SELECT e.*, l.*, m.* FROM emprunts e JOIN livres l ON e.livre_id = l.id JOIN membres m ON e.membre_id = m.id WHERE m.id = ?")) {
             stmt.setInt(1, idMembre);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -116,7 +116,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
         List<Emprunt> emprunts = new LinkedList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "SELECT e.*, l.*, m.* FROM emprunt e JOIN livre l ON e.livre_id = l.id JOIN membre m ON e.membre_id = m.id WHERE l.id = ?")) {
+                 "SELECT e.*, l.*, m.* FROM emprunts e JOIN livres l ON e.livre_id = l.id JOIN membres m ON e.membre_id = m.id WHERE l.id = ?")) {
             stmt.setInt(1, idLivre);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -133,7 +133,7 @@ public class EmpruntDAO implements DAO<Emprunt> {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                 "SELECT e.*, l.*, m.* FROM emprunt e JOIN livre l ON e.livre_id = l.id JOIN membre m ON e.membre_id = m.id WHERE e.dateRetourReel IS NULL")) {
+                 "SELECT e.*, l.*, m.* FROM emprunts e JOIN livres l ON e.livre_id = l.id JOIN membres m ON e.membre_id = m.id WHERE e.dateRetourReel IS NULL")) {
             while (rs.next()) {
                 emprunts.add(mapEmprunt(rs));
             }
